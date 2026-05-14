@@ -17,8 +17,27 @@ import Warranty from './pages/Warranty';
 import TechSpecs from './pages/TechSpecs';
 import Feedback from './pages/Feedback';
 import AIAssistant from './pages/AIAssistant';
+import MaintenancePredict from './pages/MaintenancePredict';
+import RecallImpactAssess from './pages/RecallImpactAssess';
 import Layout from './components/Layout';
 
+// // === Batch 06 Gaps & Frontend Mounts ===
+import CFAgenticVehicleHealthMonitoringPage from './pages/CFAgenticVehicleHealthMonitoringPage';
+import CFComputerVisionDamageAssessmentPage from './pages/CFComputerVisionDamageAssessmentPage';
+import CFRecallProactiveManagementPage from './pages/CFRecallProactiveManagementPage';
+import CFSmartMaintenanceSchedulingPage from './pages/CFSmartMaintenanceSchedulingPage';
+import CFPartsCompatibilityOptimizationPage from './pages/CFPartsCompatibilityOptimizationPage';
+import GapMaintenanceWithoutMaintenancePage from './pages/GapMaintenanceWithoutMaintenancePage';
+import GapRecallsWithoutRecallPage from './pages/GapRecallsWithoutRecallPage';
+import GapServicesWithoutServicePage from './pages/GapServicesWithoutServicePage';
+import GapNoRealVehicleApiIntegrationBmwConnecteddrivePage from './pages/GapNoRealVehicleApiIntegrationBmwConnecteddrivePage';
+import GapNoPartsOrderingIntegrationWithRetailersPage from './pages/GapNoPartsOrderingIntegrationWithRetailersPage';
+import GapNoIntegrationWithMechanicsServiceShopsPage from './pages/GapNoIntegrationWithMechanicsServiceShopsPage';
+import GapNoAppointmentBookingSchedulingModulePage from './pages/GapNoAppointmentBookingSchedulingModulePage';
+import GapNoNotificationsModuleGrep0Page from './pages/GapNoNotificationsModuleGrep0Page';
+import GapNoAuditLoggingGrep0Page from './pages/GapNoAuditLoggingGrep0Page';
+import GapNoWebhooksForRecallSafetyAlertsPage from './pages/GapNoWebhooksForRecallSafetyAlertsPage';
+import GapNoMobileAppDespiteConsumerPage from './pages/GapNoMobileAppDespiteConsumerPage';
 function App() {
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState(null);
@@ -72,7 +91,27 @@ function App() {
           <Route path="/specs" element={<TechSpecs showToast={showToast} />} />
           <Route path="/feedback" element={<Feedback showToast={showToast} />} />
           <Route path="/ai" element={<AIAssistant showToast={showToast} />} />
+          <Route path="/ai-maintenance-predict" element={<MaintenancePredict showToast={showToast} />} />
+          <Route path="/ai-recall-impact" element={<RecallImpactAssess showToast={showToast} />} />
           <Route path="*" element={<Navigate to="/" />} />
+        
+          {/* // === Batch 06 Gaps & Frontend Mounts === */}
+          <Route path="/cf-agentic-vehicle-health-monitoring" element={<CFAgenticVehicleHealthMonitoringPage />} />
+          <Route path="/cf-computer-vision-damage-assessment" element={<CFComputerVisionDamageAssessmentPage />} />
+          <Route path="/cf-recall-proactive-management" element={<CFRecallProactiveManagementPage />} />
+          <Route path="/cf-smart-maintenance-scheduling" element={<CFSmartMaintenanceSchedulingPage />} />
+          <Route path="/cf-parts-compatibility-optimization" element={<CFPartsCompatibilityOptimizationPage />} />
+          <Route path="/gap-maintenance-without-maintenance" element={<GapMaintenanceWithoutMaintenancePage />} />
+          <Route path="/gap-recalls-without-recall" element={<GapRecallsWithoutRecallPage />} />
+          <Route path="/gap-services-without-service" element={<GapServicesWithoutServicePage />} />
+          <Route path="/gap-no-real-vehicle-api-integration-bmw-connecteddrive" element={<GapNoRealVehicleApiIntegrationBmwConnecteddrivePage />} />
+          <Route path="/gap-no-parts-ordering-integration-with-retailers" element={<GapNoPartsOrderingIntegrationWithRetailersPage />} />
+          <Route path="/gap-no-integration-with-mechanics-service-shops" element={<GapNoIntegrationWithMechanicsServiceShopsPage />} />
+          <Route path="/gap-no-appointment-booking-scheduling-module" element={<GapNoAppointmentBookingSchedulingModulePage />} />
+          <Route path="/gap-no-notifications-module-grep-0" element={<GapNoNotificationsModuleGrep0Page />} />
+          <Route path="/gap-no-audit-logging-grep-0" element={<GapNoAuditLoggingGrep0Page />} />
+          <Route path="/gap-no-webhooks-for-recall-safety-alerts" element={<GapNoWebhooksForRecallSafetyAlertsPage />} />
+          <Route path="/gap-no-mobile-app-despite-consumer" element={<GapNoMobileAppDespiteConsumerPage />} />
         </Routes>
       </Layout>
       {toast && (
