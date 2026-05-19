@@ -54,6 +54,14 @@ app.use('/api/gap-no-audit-logging-grep-0', require('./routes/gapFeat_no_audit_l
 app.use('/api/gap-no-webhooks-for-recall-safety-alerts', require('./routes/gapFeat_no_webhooks_for_recall_safety_alerts'));
 app.use('/api/gap-no-mobile-app-despite-consumer', require('./routes/gapFeat_no_mobile_app_despite_consumer'));
 
+// === Custom Views (mounted BEFORE 404) ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// 404 handler (mounted last)
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found', path: req.path });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
 });

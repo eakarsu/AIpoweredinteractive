@@ -7,6 +7,7 @@ const navItems = [
     { path: '/ai', label: 'AI Assistant', icon: '🤖' },
     { path: '/ai-maintenance-predict', label: 'Maintenance Predict', icon: '🛠️' },
     { path: '/ai-recall-impact', label: 'Recall Impact', icon: '📢' },
+    { path: '/custom-views', label: 'Interactive Views', icon: '🎯' },
   // === Batch 06 Gaps & Frontend Mounts ===
   { path: '/cf-agentic-vehicle-health-monitoring', label: 'Agentic vehicle health monitoring', icon: '✨' },
   { path: '/cf-computer-vision-damage-assessment', label: 'Computer vision damage assessment', icon: '✨' },

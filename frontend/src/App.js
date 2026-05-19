@@ -38,6 +38,7 @@ import GapNoNotificationsModuleGrep0Page from './pages/GapNoNotificationsModuleG
 import GapNoAuditLoggingGrep0Page from './pages/GapNoAuditLoggingGrep0Page';
 import GapNoWebhooksForRecallSafetyAlertsPage from './pages/GapNoWebhooksForRecallSafetyAlertsPage';
 import GapNoMobileAppDespiteConsumerPage from './pages/GapNoMobileAppDespiteConsumerPage';
+import CustomViewsPage from './pages/CustomViewsPage';
 function App() {
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState(null);
@@ -93,6 +94,7 @@ function App() {
           <Route path="/ai" element={<AIAssistant showToast={showToast} />} />
           <Route path="/ai-maintenance-predict" element={<MaintenancePredict showToast={showToast} />} />
           <Route path="/ai-recall-impact" element={<RecallImpactAssess showToast={showToast} />} />
+          <Route path="/custom-views" element={<CustomViewsPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         
           {/* // === Batch 06 Gaps & Frontend Mounts === */}
