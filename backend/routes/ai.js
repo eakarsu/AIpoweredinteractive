@@ -255,6 +255,138 @@ router.post('/recommend-parts', async (req, res) => {
   }
 });
 
+// AI Maintenance Predictor - predict when service will be needed based on vehicle data and maintenance history
+router.post('/maintenance-predict', async (req, res) => {
+  try {
+    const { vehicle_id, vehicle, mileage, driving_style, climate, last_services } = req.body;
+
+    let history = last_services;
+    if (!history && vehicle_id) {
+      try {
+        const result = await pool.query(
+          'SELECT service_type, service_date, mileage_at_service, notes FROM maintenance WHERE vehicle_id = $1 ORDER BY service_date DESC LIMIT 30',
+          [vehicle_id]
+        );
+        history = result.rows.map(r => `${r.service_date}: ${r.service_type} @ ${r.mileage_at_service} mi (${r.notes || 'n/a'})`).join('\n');
+      } catch (_) {}
+    }
+
+    const systemPrompt = 'You are a vehicle maintenance prediction AI. Predict next-service-need windows based on mileage, driving style, climate, and history. Return JSON only.';
+    const userMessage = `Vehicle: ${vehicle || 'unknown'}
+Current Mileage: ${mileage || 'unknown'}
+Driving Style: ${driving_style || 'normal'}
+Climate: ${climate || 'temperate'}
+
+Recent service history:
+${history || 'None provided'}
+
+Return JSON only:
+{
+  "predictions": [
+    {"service": "string", "predicted_in_miles": 0, "predicted_in_days": 0, "urgency": "low|medium|high", "reason": "string", "estimated_cost_usd": 0}
+  ],
+  "overdue_services": ["string"],
+  "monitoring_recommendations": ["string"],
+  "summary": "string"
+}`;
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'http://localhost:3000',
+        'X-Title': 'AI Owner Manual'
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        max_tokens: 1024,
+        temperature: 0.4
+      })
+    });
+
+    const data = await response.json();
+    const aiResponse = data.choices?.[0]?.message?.content || 'No prediction generated';
+
+    await pool.query(
+      'INSERT INTO ai_conversations (question, answer, category) VALUES ($1, $2, $3)',
+      [userMessage, aiResponse, 'maintenance-predict']
+    );
+
+    res.json({ response: aiResponse, model: data.model, usage: data.usage });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// AI Recall Impact Assessment - flag recalls affecting a user's vehicle
+router.post('/recall-impact-assess', async (req, res) => {
+  try {
+    const { vehicle_id, vehicle, vin, recalls } = req.body;
+
+    let recallList = recalls;
+    if (!recallList) {
+      try {
+        const result = await pool.query(
+          'SELECT recall_id, title, description, severity, issued_at, fix_action FROM recalls ORDER BY issued_at DESC LIMIT 30'
+        );
+        recallList = result.rows;
+      } catch (_) { recallList = []; }
+    }
+
+    const systemPrompt = 'You are an automotive safety analyst. Determine which recalls likely affect this vehicle and how urgently to act. Return JSON only.';
+    const userMessage = `Vehicle: ${vehicle || 'unknown'}
+VIN: ${vin || 'unknown'}
+Vehicle ID: ${vehicle_id || 'unknown'}
+
+Recall pool:
+${(recallList || []).map(r => `id=${r.recall_id || r.id || 'n/a'} title=${r.title} severity=${r.severity || 'n/a'} issued=${r.issued_at || 'n/a'} desc=${r.description || ''} fix=${r.fix_action || 'n/a'}`).join('\n') || 'None provided'}
+
+Return JSON only:
+{
+  "affected_recalls": [{"id": "string", "applies_to_vehicle": true, "severity": "low|moderate|high|critical", "urgency": "routine|soon|stop_driving", "reason": "string", "owner_action": "string"}],
+  "non_applicable": [{"id": "string", "why_not": "string"}],
+  "overall_priority": "none|routine|soon|urgent",
+  "summary": "string"
+}`;
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'http://localhost:3000',
+        'X-Title': 'AI Owner Manual'
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        max_tokens: 1024,
+        temperature: 0.3
+      })
+    });
+
+    const data = await response.json();
+    const aiResponse = data.choices?.[0]?.message?.content || 'No recall assessment generated';
+
+    await pool.query(
+      'INSERT INTO ai_conversations (question, answer, category) VALUES ($1, $2, $3)',
+      [userMessage, aiResponse, 'recall-impact']
+    );
+
+    res.json({ response: aiResponse, model: data.model, usage: data.usage });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get AI conversation history
 router.get('/history', async (req, res) => {
   try {
