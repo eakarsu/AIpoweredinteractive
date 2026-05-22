@@ -39,6 +39,11 @@ import GapNoAuditLoggingGrep0Page from './pages/GapNoAuditLoggingGrep0Page';
 import GapNoWebhooksForRecallSafetyAlertsPage from './pages/GapNoWebhooksForRecallSafetyAlertsPage';
 import GapNoMobileAppDespiteConsumerPage from './pages/GapNoMobileAppDespiteConsumerPage';
 import CustomViewsPage from './pages/CustomViewsPage';
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
+
 function App() {
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState(null);
@@ -76,6 +81,10 @@ function App() {
     <>
       <Layout user={user} onLogout={handleLogout}>
         <Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
           <Route path="/" element={<Dashboard showToast={showToast} />} />
           <Route path="/vehicles" element={<Vehicles showToast={showToast} />} />
           <Route path="/manuals" element={<Manuals showToast={showToast} />} />
