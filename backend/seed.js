@@ -597,3 +597,4 @@ async function seed() {
 }
 
 seed();
+if (process.env.ALLOW_DEMO_SEED !== 'true') { console.error('Demo seed refused; set ALLOW_DEMO_SEED=true explicitly.'); process.exit(64); }

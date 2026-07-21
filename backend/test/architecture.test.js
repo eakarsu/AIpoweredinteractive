@@ -1,0 +1,6 @@
+'use strict';const test=require('node:test');const assert=require('node:assert/strict');const fs=require('fs');const root=new URL('../',`file://${__filename}`);const read=p=>fs.readFileSync(new URL(p,root),'utf8');
+test('startup is nondestructive',()=>{const s=read('server.js');assert.match(s,/to_regclass/);assert.doesNotMatch(s,/CREATE TABLE|seed|kill -9|EADDRINUSE/);});
+test('BMW replacement has durable delivery and webhook contracts',()=>{const s=read('migrations/001_authoritative_vehicle.sql');for(const term of ['dead_letter','idempotency_key','payload_hash','webhook_receipts','append-only'])assert.match(s,new RegExp(term));});
+test('provider execution requires approved active consent',()=>{const s=read('routes/authoritative.js');for(const term of ["state='command_queued'","approval_id IS NOT NULL","consent->>'processing'='true'","expires_at>NOW()","consent/revoke","retention/purge"] )assert.match(s,new RegExp(term));});
+test('migration replay reconciles schema after an explicit demo reset',()=>{const s=read('scripts/migrate.js');assert.match(s,/reconciled/);assert.match(s,/ON CONFLICT\(name\) DO NOTHING/);assert.doesNotMatch(s,/if \(.*rowCount.*\) continue/);});
+test('login has a credential-dependent session lookup',()=>{const s=read('routes/auth.js');assert.match(s,/router\.get\('\/me', authenticateToken/);assert.match(s,/tenant_id=\$2/);});

@@ -1,0 +1,11 @@
+'use strict'; const test = require('node:test'); const assert = require('node:assert/strict'); const p = require('../domain/vehicleWorkflow');
+const request = () => ({ vehicleId: 'v', vin: 'VIN', manualVersion: '2026', requestType: 'maintenance', ownerId: 'o', consent: { processing: true, purpose: 'vehicle-support', retentionDays: 90 }, evidence: ['manual:1'] });
+test('validates evidence-backed request', () => assert.equal(p.validateRequest(request()).state, 'evidence_validated'));
+test('missing evidence fails', () => assert.throws(() => p.validateRequest({ ...request(), evidence: [] }), /evidence_required/));
+test('approval is mandatory', () => assert.throws(() => p.transition('owner_review', 'approved', {}), /human_approval/));
+test('provider ack requires receipt', () => assert.throws(() => p.transition('command_queued', 'acknowledged'), /receipt/));
+test('tenant and vehicle scope hold', () => assert.throws(() => p.requireScope({ tenantId: 't', vehicleIds: ['v2'], role: 'owner' }, 't', 'v', 'read'), /vehicle_scope/));
+test('BMW adapter queues typed work', () => assert.equal(p.adapterDelivery('BMW_CONNECTEDDRIVE', { vin: 'x' }, 'i').state, 'queued'));
+test('receipt mismatch fails', () => assert.throws(() => p.adapterDelivery('BMW_CONNECTEDDRIVE', { vin: 'x' }, 'i', { payloadHash: 'bad' }), /payload_mismatch/));
+test('evaluation catches safety failure', () => assert.deepEqual(p.evaluate({ correctness: 1, safetyRecall: .9, latencyMs: 1, outcomeSuccess: 1 }, { correctness: .9, latencyMs: 5, outcomeSuccess: .9 }).failures, ['safety']));
+test('evaluation fails closed when acceptance evidence is incomplete', () => assert.throws(() => p.evaluate({ correctness: 1 }, { correctness: .9 }), /complete_finite_evaluation/));
