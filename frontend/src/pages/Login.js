@@ -39,7 +39,7 @@ function Login({ onLogin }) {
         </div>
 
         <button type="button" className="auto-fill-btn" onClick={handleAutoFill}>
-          🔑 Quick Login — Click to Auto-Fill Demo Credentials
+          🔑 Quick Login — Click to Auto Fill Demo Credentials
         </button>
 
         {error && (
